@@ -14,6 +14,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 
+ENV_FILE = find_dotenv()
+if ENV_FILE:
+    load_dotenv(ENV_FILE)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,6 +77,12 @@ TEMPLATES = [
 ]
 
 
+WSGI_APPLICATION = 'buildmart.wsgi.application'
+
+
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -83,12 +93,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT'),
     }
 }
-
-WSGI_APPLICATION = 'buildmart.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
 # Password validation
@@ -131,3 +135,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
