@@ -10,6 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+
+
+
+
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
@@ -45,6 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
+    'user',
+    'accounts', 
     'rest_framework',
 ]
 
@@ -76,8 +83,17 @@ TEMPLATES = [
     },
 ]
 
-
+REST_FRAMEWORK = {
+   
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 WSGI_APPLICATION = 'buildmart.wsgi.application'
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATE_DIR = os.path.join(BASE_DIR, "BuildMart", "templates")
 
 
 # Database
@@ -126,15 +142,31 @@ USE_I18N = True
 USE_TZ = True
 
 
+
+ENV_FILE = find_dotenv()
+if ENV_FILE:
+    load_dotenv(ENV_FILE)
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+REDIRECT_URI = 'http://localhost:8001/auth/callback'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
+AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
+AUTH_USER_MODEL = 'user.User'  
+AUTHENTICATION_BACKENDS = [
+    'user.backends.EmailBackend',  
+    'django.contrib.auth.backends.ModelBackend',  
+]
 
 
 

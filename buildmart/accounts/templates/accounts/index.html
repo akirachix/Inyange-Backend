@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+</head>
+<body>
+  <div>
+    {% if user %}
+      <h1>Welcome {{ user.name }}!</h1>
+      <p>First Name: {{ user.given_name }}</p>
+      <p>Last Name: {{ user.family_name }}</p>
+      <p>Email: {{ user.email }}</p>
+      <p>Phone Number: {{ user.phone_number }}</p>
+      <p>Role: {{ user.user_role }}</p>
+      <p><a href="{% url 'logout' %}">Logout</a></p>
+      <div><pre>{{ pretty }}</pre></div>
+    {% else %}
+      <h1>Welcome Guest</h1>
+      <p><a href="{% url 'login' %}">Login</a></p>
+    {% endif %}
+  </div>
+</body>
+</html>
