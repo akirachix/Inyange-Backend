@@ -12,7 +12,19 @@ logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
-class UserListView(APIView):
+import logging
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from .serializers import UserSerializer
+
+logger = logging.getLogger(__name__)
+User = get_user_model()
+
+class UserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -23,14 +35,10 @@ class UserListView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if User.objects.filter(email=serializer.validated_data['email']).exists():
+                logger.error('User registration failed: User with this email already exists.')
+                return Response({'error': 'User with this email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
 
-class RegisterView(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
             password = serializer.validated_data.pop('password')
             hashed_password = make_password(password)
             serializer.validated_data['password'] = hashed_password
@@ -41,7 +49,6 @@ class RegisterView(APIView):
 
         logger.error(f'User registration failed: {serializer.errors}')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class LoginListView(APIView):
