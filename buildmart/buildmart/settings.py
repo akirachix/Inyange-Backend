@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
+load_dotenv()
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -34,6 +35,13 @@ SECRET_KEY = 'django-insecure-=*=5(1t0ro--+7c^*udqx8zdeo7z$4=vouz66&=q49s8xglhcg
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY', '')
+MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET', '')
+MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE', '')
+MPESA_PASSKEY = os.getenv('MPESA_PASSKEY', '')
+MPESA_ACCESS_TOKEN_LINK = os.getenv('MPESA_ACCESS_TOKEN_LINK', '') 
+MPESA_LINK = os.getenv('MPESA_LINK', '')
 
 
 # Application definition
