@@ -18,4 +18,3 @@ build/
 .vscode/
 # Ignore custom file containing databases
 database_config.py
-__pycache__/
