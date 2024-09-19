@@ -13,7 +13,7 @@ class Cart:
         If not, it creates a new cart and stores it in the session.
         """
          self.session = request.session
-         self.homeowner_id = request.session.get('homeowner_id')  # Retrieve homeowner_id from the session
+        #  self.homeowner_id = request.session.get('homeowner_id')  # Retrieve homeowner_id from the session
          self.cart = self.session.get(settings.CART_SESSION_ID, {})
 
         
@@ -83,7 +83,7 @@ class Cart:
         for item in cart.values():
             item["price"] = Decimal(item["price"])
             item["total_price"] = item["price"] * item["quantity"]
-            item["homeowner_id"] = self.homeowner_id  # Add homeowner_id to each item
+            # item["homeowner_id"] = self.homeowner_id  # Add homeowner_id to each item
             yield item
             
             

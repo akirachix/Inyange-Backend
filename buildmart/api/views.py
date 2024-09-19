@@ -6,10 +6,6 @@ from .serializers import MaterialSerializer
 from material.models import Material
 from .serializers import OrderSerializer
 from order.models import Order
-from homeowner.models import Homeowner
-from .serializers import HomeownerSerializer
-from supplier.models import Supplier
-from .serializers import SupplierSerializer
 from cart.service import Cart
 from django.utils.deprecation import MiddlewareMixin
 import logging
@@ -134,7 +130,7 @@ class CartListView(APIView):
         quantity = request.data.get('quantity', 1)  # Default quantity if not provided
         override_quantity = request.data.get('override_quantity', False)
         image = request.FILES.get('image')
-        homeowner_id = request.data.get('homeowner_id')  # Obtain homeowner_id from request data
+        # homeowner_id = request.data.get('homeowner_id')  # Obtain homeowner_id from request data
 
 
         # Ensure both material_name and brand_name are present
@@ -177,46 +173,6 @@ class CartListView(APIView):
             logger.error("An error occurred while updating the cart: %s", str(e))
             return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-
-class HomeownerListView(APIView):
-    def get(self, request):
-        homeowners = Homeowner.objects.all()
-        serializer = HomeownerSerializer(homeowners, many = True)
-
-        return Response(serializer.data)
-    
-    def post(self, request):
-        serializer = HomeownerSerializer(data =request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED)
-        
-        else:
-            return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
-
-
-class HomeownerDetailView(APIView):
-    def get(self, request, id):
-        try:
-            homeowner = Homeowner.objects.get(homeowner_id=id)  # Use cart_id if that's your primary key field
-        except Homeowner.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = HomeownerSerializer(homeowner)
-        return Response(serializer.data)
-
-    def put(self, request, id):
-        try:
-            homeowner = Homeowner.objects.get(homeowner_id=id)  # Use cart_id if that's your primary key field
-        except Homeowner.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = HomeownerSerializer(homeowner, data=request.data, partial=True)  # Use partial=True for partial updates
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
  
     
 class CartItemCountView(APIView):
@@ -238,45 +194,7 @@ class CartItemCountView(APIView):
     
     
     
-    
-class SupplierListView(APIView):
-    def get(self, request):
-        suppliers = Supplier.objects.all()
-        serializer = SupplierSerializer(suppliers, many = True)
 
-        return Response(serializer.data)
-    
-    def post(self, request):
-        serializer = SupplierSerializer(data =request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED)
-        
-        else:
-            return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
-
-
-class SupplierDetailView(APIView):
-    def get(self, request, id):
-        try:
-            supplier = Supplier.objects.get(supplier_id=id)  # Use cart_id if that's your primary key field
-        except Supplier.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = SupplierSerializer(supplier)
-        return Response(serializer.data)
-
-    def put(self, request, id):
-        try:
-            supplier = Supplier.objects.get(supplier_id=id)  # Use cart_id if that's your primary key field
-        except Supplier.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = SupplierSerializer(supplier, data=request.data, partial=True)  # Use partial=True for partial updates
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         
 
