@@ -8,7 +8,6 @@ from .serializers import MaterialSerializer
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer
 
 # Create your views here.
 
