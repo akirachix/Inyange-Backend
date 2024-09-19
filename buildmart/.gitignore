@@ -4,20 +4,6 @@ venv/
 .env
 # Django
 db.sqlite3
-*.pyc
-# Backup files
-*.bak
-# PyCharm
-.idea/
-# Python Packaginga
-*.egg-info/
-dist/
-build/
-# VSCode
-.vscode/
-# Ignore custom file containing databases
-database_config.py
-# Python Bytecode Files
 __pycache__/
 *.py[cod]
 # Django Stuff

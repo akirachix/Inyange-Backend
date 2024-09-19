@@ -1,5 +1,4 @@
 from django.urls import path
-
 from .views import MaterialDetailView
 from .views import MaterialListView
 from .views import UserListView

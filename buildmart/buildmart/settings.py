@@ -55,8 +55,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
+    'cart',
+    'order',
     'material',
     'accounts',
+    'payments',
     'user',
 ]
 
@@ -69,6 +72,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default session backend
+SESSION_COOKIE_NAME = 'sessionid'
 
 ROOT_URLCONF = 'buildmart.urls'
 
@@ -144,6 +150,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+CART_SESSION_ID = 'cart'
 
 
 # Static files (CSS, JavaScript, Images)
