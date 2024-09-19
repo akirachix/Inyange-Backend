@@ -80,6 +80,14 @@ TEMPLATES = [
 ]
 
 
+REST_FRAMEWORK = {
+   
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+
 WSGI_APPLICATION = 'buildmart.wsgi.application'
 
 
@@ -141,3 +149,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
+REDIRECT_URI = 'http://localhost:8001/auth/callback'
+
+
+# REDIRECT_URI = 'http://localhost:3000/accounts/'
+    
+    
+
+
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
+AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
+AUTH_USER_MODEL = 'user.User'  
+AUTHENTICATION_BACKENDS = [
+    'user.backends.EmailBackend',  
+    'django.contrib.auth.backends.ModelBackend',  
+]

@@ -17,19 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'password', 'email', 'phone_number', 'first_name', 'last_name','user_role')
-        extra_kwargs = {
-            'password': {'write_only': True, 'required': True},
-            'username': {'required': True},
-            'email': {'required': True},
-            'first_name': {'required': True},
-            'last_name': {'required': True},
-            'phone_number': {'required': True},
-            'user_role': {'required': True}
-
-
-
-
-        }
+     
     
     def validate(self, data):
         
