@@ -52,7 +52,6 @@ class MaterialDetailView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
 import logging
 logger = logging.getLogger(__name__)
 
