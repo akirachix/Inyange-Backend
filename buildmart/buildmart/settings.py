@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
+load_dotenv()
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -21,6 +22,7 @@ if ENV_FILE:
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATE_DIR = os.path.join(BASE_DIR, "BuildMart", "templates")
 
 
 # Quick-start development settings - unsuitable for production
@@ -33,6 +35,13 @@ SECRET_KEY = 'django-insecure-=*=5(1t0ro--+7c^*udqx8zdeo7z$4=vouz66&=q49s8xglhcg
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY', '')
+MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET', '')
+MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE', '')
+MPESA_PASSKEY = os.getenv('MPESA_PASSKEY', '')
+MPESA_ACCESS_TOKEN_LINK = os.getenv('MPESA_ACCESS_TOKEN_LINK', '') 
+MPESA_LINK = os.getenv('MPESA_LINK', '')
 
 
 # Application definition
@@ -49,6 +58,9 @@ INSTALLED_APPS = [
     'cart',
     'order',
     'material',
+    'accounts',
+    'payments',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -81,6 +93,14 @@ TEMPLATES = [
         },
     },
 ]
+
+
+REST_FRAMEWORK = {
+   
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 
 
 WSGI_APPLICATION = 'buildmart.wsgi.application'
@@ -146,3 +166,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
+REDIRECT_URI = 'http://localhost:8001/auth/callback'
+
+
+# REDIRECT_URI = 'http://localhost:3000/accounts/'
+    
+    
+
+
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
+AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
+AUTH_USER_MODEL = 'user.User'  
+AUTHENTICATION_BACKENDS = [
+    'user.backends.EmailBackend',  
+    'django.contrib.auth.backends.ModelBackend',  
+]
