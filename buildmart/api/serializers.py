@@ -32,11 +32,9 @@ class UserSerializer(serializers.ModelSerializer):
             raise ValidationError({'email': 'Email already exists'})
         return data
     def create(self, validated_data):
-        # Check for existing username
         if User.objects.filter(username=validated_data['username']).exists():
             raise ValidationError({"username": "This username is already taken."})
 
-        # Check for existing email
         if User.objects.filter(email=validated_data['email']).exists():
             raise ValidationError({"email": "This email is already registered."})
 
@@ -45,24 +43,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         Token.objects.create(user=user)
         return user
-    
-    # def create(self, validated_data):
-    #     password = validated_data.pop('password')
-    #     user = User.objects.create(**validated_data)
-    #     user.set_password(password)
-    #     user.save()
-    #     Token.objects.create(user=user)
-    #     return user
-    
-    # def create(self, validated_data):
-    #     user = User.objects.create(
-    #         first_name=validated_data['first_name'],
-    #         last_name=validated_data['last_name'],
-    #         phone_number=validated_data['phone_number'],
-    #         email=validated_data['email'],
-    #         role=validated_data['role']
-    #     )
-    #     return user
 
 
 

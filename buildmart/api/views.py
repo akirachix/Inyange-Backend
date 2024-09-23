@@ -46,17 +46,14 @@ class MaterialListView(APIView):
 
 class MaterialDetailView(APIView):
     def get(self, request):
-        # Extract query parameters
         category = request.query_params.get('category', None)  # Filter by category
         brand = request.query_params.get('brand', None)  # Filter by brand
         min_price = request.query_params.get('min_price', None)  # Minimum price
         max_price = request.query_params.get('max_price', None)  # Maximum price
         sort_by = request.query_params.get('sort', 'price')  # Sorting option (default to price)
 
-        # Start with all materials
         queryset = Material.objects.all()
 
-        # Apply filters
         if category:
             queryset = queryset.filter(category_name=category)
         if brand:
@@ -66,13 +63,11 @@ class MaterialDetailView(APIView):
         if max_price:
             queryset = queryset.filter(price__lte=max_price)
         
-        # Apply sorting
         if sort_by in ['price', '-price', 'material_name', '-material_name']:
             queryset = queryset.order_by(sort_by)
         else:
             queryset = queryset.order_by('price')  # Default sorting
 
-        # Serialize and return data
         serializer = MaterialSerializer(queryset, many=True)
         return Response(serializer.data)
     
@@ -108,12 +103,6 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            # serializer.save()
-            # response = {
-            #     'success': True,
-            #     'user': serializer.data,
-            #     'token': Token.objects.get(user=User.objects.get(username=serializer.data['username'])).key
-            # }
             password = serializer.validated_data.pop('password')
             hashed_password = make_password(password)
             serializer.validated_data['password'] = hashed_password
@@ -162,16 +151,7 @@ class LoginListView(APIView):
 
         logger.error(f'Login failed for user: {email}')
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-            
-            
-            
-        #     return Response({'message': 'User logged in successfully'}, status=status.HTTP_200_OK)
-        
-
-        # logger.error(f'Login failed for user: {email}')
-        # return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)    
-    
-    
+                
     
 class OrderListView(APIView):
     """
@@ -239,12 +219,11 @@ class CartListView(APIView):
             
             print(f"Cart before processing: {cart.cart}")
             for item_id, item in cart.get_items():
-                # Ensure material_name and brand_name keys exist
                 material_name = item.get('material_name')
                 brand_name = item.get('brand_name')
                 if not material_name or not brand_name:
                     logger.error(f"Missing material_name or brand_name in cart item: {item}")
-                    continue  # Skip this item and move to the next one
+                    continue  
                 materials = Material.objects.filter(material_name=material_name, brand_name=brand_name)
                 if materials.exists():
                     material_obj = materials.first()
@@ -287,9 +266,9 @@ class CartListView(APIView):
         items = request.data.get('items', [])
         if not items or not isinstance(items, list):
             return Response({"error": "Invalid request. 'items' should be a list of item objects."}, status=status.HTTP_400_BAD_REQUEST)
-        cart = Cart(request)  # Initialize the cart
-        added_items = []  # List to track successfully added items
-        errors = []  # List to track errors for items that could not be added
+        cart = Cart(request)
+        added_items = [] 
+        errors = [] 
         for item in items:
             material_name = item.get('material_name')
             brand_name = item.get('brand_name')
@@ -300,7 +279,7 @@ class CartListView(APIView):
                 error_message = f"Missing required fields: 'material_name' or 'brand_name' for item: {item}"
                 logger.error(error_message)
                 errors.append({"error": error_message})
-                continue  # Skip this item and go to the next one
+                continue 
             try:
                 material_obj = None
                 materials = Material.objects.filter(material_name=material_name, brand_name=brand_name)
@@ -308,26 +287,26 @@ class CartListView(APIView):
                     error_message = f"Material not found: {material_name} by {brand_name}."
                     logger.error(error_message)
                     errors.append({"error": error_message})
-                    continue  # Skip this item and go to the next one
+                    continue  
                 if materials.count() > 1:
                     error_message = f"Multiple materials found for name: {material_name} and brand: {brand_name}."
                     logger.warning(error_message)
                     errors.append({"error": error_message})
-                    continue  # Skip this item and go to the next one
+                    continue 
                 material_obj = materials.first()
             except Exception as e:
                 error_message = f"Error finding material: {str(e)} for item: {item}"
                 logger.error(error_message)
                 errors.append({"error": error_message})
-                continue  # Skip this item and go to the next one
+                continue  
             if material_obj is None:
                 error_message = "Unexpected error: Material object is None after filtering."
                 logger.error(error_message)
                 errors.append({"error": error_message})
-                continue  # Skip this item and go to the next one
+                continue  
             try:
                 cart.add_item({
-                    'id': material_obj.material_id,  # Using material ID to uniquely identify
+                    'id': material_obj.material_id,  
                     'name': material_obj.material_name,
                     'price': price,
                     'quantity': quantity,
@@ -342,17 +321,17 @@ class CartListView(APIView):
                 error_message = f"Failed to add item: {material_name} by {brand_name}. Reason: {str(e)}"
                 logger.error(error_message)
                 errors.append({"error": error_message})
-                continue  # Skip this item and go to the next one
-            cart_items = list(cart.get_items())  # Fetch current cart items
-            cart_total_price = str(cart.get_total_price())  # Total price of the cart
-            item_count = len(cart)  # Total number of items in the cart
+                continue  
+            cart_items = list(cart.get_items())
+            cart_total_price = str(cart.get_total_price())  
+            item_count = len(cart)  
             material_ids = [item_id for item_id, _ in cart_items]
             materials = Material.objects.filter(material_id__in=material_ids)
             material_dict = {str(material.material_id): material.material_name for material in materials}
             formatted_cart_items = [
                 {
                     "material_id": item_id,
-                    "material_name": material_dict.get(item_id, "Unknown"),  # Replace ID with name
+                    "material_name": material_dict.get(item_id, "Unknown"),  
                     "quantity": item_data["quantity"],
                     "price": item_data["price"],
                     "user_id": item_data["user_id"]
@@ -368,182 +347,11 @@ class CartListView(APIView):
             response = {
                 "message": "Items processed.",
                 "cart_details": cart_details,
-                # "added_items": added_items,
-                "errors": errors  # Include any errors encountered during the addition of items
+                "errors": errors  
                 }
         return Response(response, status=status.HTTP_201_CREATED)
         
         
         
         
-    # def post(self, request, **kwargs):
-    #     if not request.user.is_authenticated:
-    #         return Response({"error": "Authentication credentials required."}, status=status.HTTP_401_UNAUTHORIZED)
-    #     material_name = request.data.get('material_name')
-    #     brand_name = request.data.get('brand_name')
-    #     price = request.data.get('price', '0.00')
-    #     quantity = request.data.get('quantity', 1)
-    #     override_quantity = request.data.get('override_quantity', False)
-    #     if not material_name or not brand_name:
-    #         logger.error("Missing required fields: 'material_name' or 'brand_name'")
-    #         return Response({"error": "Missing required fields: 'material_name' and 'brand_name' are required."}, status=status.HTTP_400_BAD_REQUEST)
-    #     try:
-    #         material_obj = None
-    #         materials = Material.objects.filter(material_name=material_name, brand_name=brand_name)
-    #         if not materials.exists():
-    #             logger.error(f"Material not found for name: {material_name} and brand: {brand_name}")
-    #             return Response({"error": "Material not found"}, status=status.HTTP_404_NOT_FOUND)
-    #         if materials.count() > 1:
-    #             logger.warning(f"Multiple materials found for name: {material_name} and brand: {brand_name}")
-    #             return Response({"error": "Multiple materials found. Please specify more details to identify the correct material."}, status=status.HTTP_400_BAD_REQUEST)
-    #         material_obj = materials.first()
-    #     except Exception as e:
-    #         logger.error(f"Error finding material: {str(e)}")
-    #         return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    #     if material_obj is None:
-    #         logger.error("Material object is None after filtering, unexpected state.")
-    #         return Response({"error": "Unexpected error occurred, material could not be identified."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    #     cart = Cart(request)  # Use the session-based cart
-    #     cart.add_item({
-    #         'id': material_obj.material_id,  # Using material ID to uniquely identify
-    #         'name': material_obj.material_name,
-    #         'price': price,
-    #         'quantity': quantity,
-    #         }, override_quantity=override_quantity)  # Add the override quantity parameter
-    #     cart_details = {
-    #         "cart_items": list(cart.get_items()),  # Fetch current cart items
-    #         "cart_total_price": str(cart.get_total_price()),  # Total price of the cart
-    #         "item_count": len(cart),  # Total number of items in the cart
-    #         }
-    #     return Response({
-    #         "message": "Item added to cart successfully",
-    #         "cart_details": cart_details
-    #         }, status=status.HTTP_201_CREATED)
-    
-    # def get(self, request, format=None):
-    #     user = request.user  
-    #     try:
-    #         cart = Cart(request)
-    #         cart_data = []
-    #         cart_total_price = Decimal('0.00')
-            
-    #         for item_id, item in cart.get_items():
-    #             material_name = item.get('material_name')
-    #             brand_name = item.get('brand_name')
-            
-    #         materials = Material.objects.filter(material_name=material_name, brand_name=brand_name)
-    #         if materials.exists():
-    #             material_obj = materials.first() 
-    #             total_price = Decimal(item['price']) * item['quantity'] 
-    #             cart_data.append({
-    #                 "material_id": material_obj.id,
-    #                 "material_name": material_obj.material_name,
-    #                 "brand_name": material_obj.brand_name,
-    #                 "quantity": item['quantity'], 
-    #                 "price": item['price'],  
-    #                 "total_price": str(Decimal(item['price']) * item['quantity'])
-                    
-    #             })
-    #             cart_total_price += total_price
-    #         else:
-    #             logger.warning(f"Material not found for {material_name} by {brand_name}.")
-    #             cart_data.append({
-    #                 "error": f"Material not found: {material_name} by {brand_name}",
-    #                 "quantity": item['quantity'],
-    #             })
-    #             cart=Cart(request)
-    #             cart_total = cart.get_total_price()
-    #             return Response({
-    #                 "data": cart_data,
-    #                 "cart_total_price": str(cart_total_price) 
-    #     }, status=status.HTTP_200_OK)
-    #     except Exception as e:
-    #             logger.error("Error retrieving cart: %s", str(e))
-    #             return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    
-    # def post(self, request, **kwargs):
-    #     if not request.user.is_authenticated:
-    #         return Response({"error": "Authentication credentials required."}, status=status.HTTP_401_UNAUTHORIZED)
-    #     material_name = request.data.get('material_name')
-    #     brand_name = request.data.get('brand_name')
-    #     price = request.data.get('price', '0.00')
-    #     quantity = request.data.get('quantity', 1)
-    #     override_quantity = request.data.get('override_quantity', False)
-    #     if not material_name or not brand_name:
-    #         logger.error("Missing required fields: 'material_name' or 'brand_name'")
-    #         return Response({"error": "Missing required fields: 'material_name' and 'brand_name' are required."}, status=status.HTTP_400_BAD_REQUEST)
-    #     try:
-    #         materials = Material.objects.filter(material_name=material_name, brand_name=brand_name)
-    #         if not materials.exists():
-    #             logger.error(f"Material not found for name: {material_name} and brand: {brand_name}")
-    #             return Response({"error": "Material not found"}, status=status.HTTP_404_NOT_FOUND)
-    #         if materials.count() > 1:
-    #             logger.warning(f"Multiple materials found for name: {material_name} and brand: {brand_name}")
-    #             return Response({"error": "Multiple materials found. Please specify more details to identify the correct material."}, status=status.HTTP_400_BAD_REQUEST)
-    #         material_obj = materials.first()
-    #     except Exception as e:
-    #         logger.error(f"Error finding material: {str(e)}")
-    #         return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    #     cart = Cart(request)  # Use the session-based cart
-    #     cart.add_item({
-    #         'id': material_obj.material_id,  # Using material ID to uniquely identify
-    #         'name': material_name,
-    #         'price': price,
-    #         'quantity': quantity,
-    #         }, override_quantity=override_quantity)  # Add the override quantity parameter
-    #     cart_details = {
-    #         "cart_items": list(cart.get_items()),  # Fetch current cart items
-    #         "cart_total_price": str(cart.get_total_price()),  # Total price of the cart
-    #         "item_count": len(cart),  # Total number of items in the cart
-    #         }
-    #     return Response({
-    #         "message": "Item added to cart successfully",
-    #         "cart_details": cart_details }, status=status.HTTP_201_CREATED)
-    
-    
-    
-            
-            
-            
-    # def post(self, request, **kwargs):
-    #     if not request.user.is_authenticated:
-    #         return Response({"error": "Authentication credentials required."}, status=status.HTTP_401_UNAUTHORIZED)
-
-    #     material_name = request.data.get('material_name')
-    #     brand_name = request.data.get('brand_name')
-    #     price = request.data.get('price', '0.00')
-    #     quantity = request.data.get('quantity', 1)
-    #     override_quantity = request.data.get('override_quantity', False)
-
-    #     if not material_name or not brand_name:
-    #         logger.error("Missing required fields: 'material_name' or 'brand_name'")
-    #         return Response({"error": "Missing required fields."}, status=status.HTTP_400_BAD_REQUEST)
-
-    #     # Attempt to find the material
-    #     try:
-    #         material_obj = Material.objects.filter(material_name=material_name, brand_name=brand_name)
-    #     except Material.DoesNotExist:
-    #         logger.error("Material not found.")
-    #         return Response({"error": "Material not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    #     # Get or create cart for the user
-    #     cart = Cart(request)  # Use the session-based cart
-    #     cart.add_item({
-    #         'name': material_name,
-    #         'price': price,
-    #         'quantity': quantity,
-    #     })
-
-    #     cart_details = {
-    #         "cart_items": list(cart.get_items()),  # Fetch current cart items
-    #         "cart_total_price": str(cart.get_total_price()),  # Total price of the cart
-    #         "item_count": len(cart),  # Total number of items in the cart
-    #     }
-
-    #     return Response({
-    #         "message": "Item added to cart successfully",
-    #         "cart_details": cart_details
-    #     }, status=status.HTTP_201_CREATED)
-
-  
+   

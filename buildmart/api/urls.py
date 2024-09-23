@@ -21,7 +21,6 @@ urlpatterns = [
     path("orderdetail/<int:id>/", OrderDetailView.as_view(), name = "order_detail_view"), 
     path('order/', CartListView.as_view(), name='order'),
     path('api-token-auth/', views.obtain_auth_token),
-    # path('generate_token/', views.generate_token, name='generate_token'),
     path('generate_token/', ObtainAuthToken.as_view(), name='generate_token'),
     
 

@@ -55,7 +55,6 @@ def query_mpesa_payment_status(checkout_request_id):
             "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/json",
         }
-         # Generate the password required for the API request using the shortcode and passkey
         password = generate_password(shortcode, passkey)
         payload = {
             "BusinessShortCode": shortcode,

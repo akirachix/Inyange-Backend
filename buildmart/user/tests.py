@@ -29,22 +29,7 @@ class UserManagerTest(TestCase):
         self.assertEqual(user.phone_number, self.phone_number)
         self.assertTrue(user.check_password(self.password))
         self.assertFalse(user.is_staff)
-    # def test_create_user_without_email(self):
-    #     with self.assertRaises(ValueError) as context:
-    #         User.objects.create_user(
-    #             email="",  # Simulate missing email
-    #             username=self.username,
-    #             first_name=self.first_name,
-    #             last_name=self.last_name,
-    #             phone_number=self.phone_number,
-    #             user_role=self.user_role,
-    #             password=self.password,
-    #         )
-    #     self.assertEqual(str(context.exception), "The Email field must be set")
-    # def test_create_user_without_email(self):
-    #     with self.assertRaises("user not found") as context:
-    #         User.objects.create()  # Adjust this line if you're using a different method
-    #     self.assertEqual(str(context.exception), "Email must be provided")
+ 
     def test_create_superuser_success(self):
         superuser = User.objects.create_superuser(
             email=self.email,
@@ -57,18 +42,7 @@ class UserManagerTest(TestCase):
         )
         self.assertTrue(superuser.is_staff)
         self.assertTrue(superuser.is_superuser)
-    # def test_create_superuser_without_email(self):
-    #     with self.assertRaises(ValueError) as context:
-    #         User.objects.create_superuser(
-    #             email="",  # Simulate missing email
-    #             username=self.username,
-    #             first_name=self.first_name,
-    #             last_name=self.last_name,
-    #             phone_number=self.phone_number,
-    #             user_role=self.user_role,
-    #             password=self.password,
-    #         )
-    #     self.assertEqual(str(context.exception), "The Email field must be set")
+
 class UserModelTest(TestCase):
     def setUp(self):
         self.email = "user@example.com"

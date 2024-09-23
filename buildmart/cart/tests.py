@@ -76,27 +76,5 @@ class CartTestCase(TestCase):
         # Check the total price
         self.assertEqual(self.cart.get_total_price(), Decimal('20.00'))
 
-    # def test_clear_cart(self):
-    #     """Test clearing the cart."""
-    #     material_data = {'id': self.material.material_id, 'price': str(self.material.price)}
-    #     self.cart.add_item(material_data, quantity=2)
-    #     self.cart.clear()
-        
-    #     # Check that the cart is empty
-    #     self.assertEqual(len(self.cart), 0)
-    #     self.assertEqual(self.cart.get_total_price(), Decimal('0.00'))
 
-    # def test_load_user_cart(self):
-    #     """Test loading a user's cart from the database."""
-    #     # Create a user cart; ensure to delete any existing carts first
-    #     UserCart.objects.filter(user=self.user).delete()
-    #     UserCart.objects.create(user=self.user, cart={
-    #         str(self.material.material_id): {'quantity': 3, 'price': str(self.material.price)}
-    #     })
-        
-        # Initialize a new cart to test loading
-        # new_cart = Cart(self.request)
-        
-        # # Check that the cart is loaded correctly
-        # self.assertEqual(new_cart.cart[str(self.material.material_id)]['quantity'], 3)
 

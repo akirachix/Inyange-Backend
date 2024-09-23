@@ -16,7 +16,6 @@ class OrderModelTest(TestCase):
             quantity=100,
             image=None  # or provide a valid image file if needed
         )
-        # Create an Order instance using timezone-aware datetime
         self.order = Order.objects.create(
             material=self.material,
             order_date=timezone.now(),  # Use timezone-aware datetime
@@ -29,11 +28,9 @@ class OrderModelTest(TestCase):
         self.assertEqual(self.order.status, 'Pending')
         self.assertEqual(self.order.cart_data, {'item1': 2, 'item2': 5})
     def test_order_string_representation(self):
-        # Test the string representation of the order
         expected_str = f"{self.order.order_date} Pending"
         self.assertEqual(str(self.order), expected_str)
     def test_order_auto_id(self):
-        # Test that the order_id is auto-incremented
         order2 = Order.objects.create(
             material=self.material,
             order_date=timezone.now(),
