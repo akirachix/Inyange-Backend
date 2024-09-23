@@ -10,9 +10,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('homeowner', '0001_initial'),
-        ('material', '0001_initial'),
-        ('supplier', '0001_initial'),
     ]
 
     operations = [
@@ -23,9 +20,7 @@ class Migration(migrations.Migration):
                 ('order_date', models.DateTimeField(default=datetime.datetime.now)),
                 ('status', models.CharField(max_length=200)),
                 ('cart_data', models.JSONField()),
-                ('homeowner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order', to='homeowner.homeowner')),
                 ('material', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order', to='material.material')),
-                ('supplier', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order', to='supplier.supplier')),
             ],
         ),
     ]

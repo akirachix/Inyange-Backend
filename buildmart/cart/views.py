@@ -1,28 +1,38 @@
-from django.shortcuts import redirect
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.utils import timezone
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+
 from order.models import Order
-from cart.service import Cart
+from .models import Cart 
 
-def complete_purchase(request):
-    cart = Cart(request)
+
+class CompletePurchaseView(APIView):
     
-    if not cart.get_items():
-        return HttpResponse("Your cart is empty.")
     
-    cart_items = cart.get_items()
-    print("Cart Items Debug:", cart_items)  # Debugging statement
-
-    try:
-        order = Order.objects.create(
-            homeowner=request.user,
-            cart_data=cart_items,  # Ensure this is the correct data format
-            order_date=timezone.now(),
-            status="Pending",
-            supplier=None
-        )
-    except Exception as e:
-        return HttpResponse(f"An error occurred while creating the order: {str(e)}")
-
-    cart.clear()
-    return redirect('order_confirmation', order_id=order.id)
+    permission_classes = [IsAuthenticated]  
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            cart = Cart.objects.get(user=request.user)
+        except Cart.DoesNotExist:
+            return HttpResponse("Your cart is empty.")
+        if not cart.get_items():
+            return HttpResponse("Your cart is empty.")
+        cart_items = cart.get_items()
+        print("Cart Items Debug:", cart_items) 
+        try:
+            order = Order.objects.create(
+                homeowner=request.user,
+                cart_data=cart_items,  
+                order_date=timezone.now(),
+                status="Pending",
+                supplier=None
+            )
+        except Exception as e:
+            return HttpResponse(f"An error occurred while creating the order: {str(e)}")
+        cart.clear()
+        return redirect('order_confirmation', order_id=order.id)
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("Invalid request method.", status=405)

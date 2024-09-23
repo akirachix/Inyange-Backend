@@ -10,7 +10,7 @@ class Material(models.Model):
         ('Hardware and tools', 'Hardware and tools'),
     ]
     category_name = models.CharField(max_length= 50, choices = CATEGORY_CHOICES)
-    material_name = models.CharField(max_length= 50)
+    material_name = models.CharField(max_length= 255)
     brand_name = models.CharField(max_length= 200)
     description = models.CharField(max_length= 100)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
