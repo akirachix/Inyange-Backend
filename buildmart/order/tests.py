@@ -6,7 +6,6 @@ from django.utils import timezone
 
 class OrderModelTest(TestCase):
     def setUp(self):
-        # Create a Material instance for the ForeignKey
         self.material = Material.objects.create(
             category_name='Building materials',
             material_name='Test Material',
@@ -14,16 +13,15 @@ class OrderModelTest(TestCase):
             description='A material for testing purposes',
             price=10.00,
             quantity=100,
-            image=None  # or provide a valid image file if needed
+            image=None  
         )
         self.order = Order.objects.create(
             material=self.material,
-            order_date=timezone.now(),  # Use timezone-aware datetime
+            order_date=timezone.now(),  
             status='Pending',
             cart_data={'item1': 2, 'item2': 5}
         )
     def test_order_creation(self):
-        # Test that the order was created successfully
         self.assertEqual(self.order.material, self.material)
         self.assertEqual(self.order.status, 'Pending')
         self.assertEqual(self.order.cart_data, {'item1': 2, 'item2': 5})

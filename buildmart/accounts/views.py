@@ -122,7 +122,6 @@ def index(request):
     if not check_existing_email(email):
         return HttpResponse("User does not exist.")
 
-    # Render the index page with user session data
     return render(
         request,
         "accounts/index.html",

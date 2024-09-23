@@ -11,7 +11,7 @@ class UserManagerTest(TestCase):
         self.phone_number = "1234567890"
         self.password = "password123"
         self.user_role = "supplier"
-          # Set a valid user role
+        
     def test_create_user_success(self):
         user = User.objects.create_user(
             email=self.email,
@@ -82,7 +82,7 @@ class UserModelTest(TestCase):
             first_name=self.first_name,
             last_name=self.last_name,
             phone_number=self.phone_number,
-            user_role="supplier",  # Set a valid role
+            user_role="supplier", 
             password=self.password
         )
-        self.assertEqual(str(user), user.email)  # String representation is the email
+        self.assertEqual(str(user), user.email)  

@@ -46,11 +46,11 @@ class MaterialListView(APIView):
 
 class MaterialDetailView(APIView):
     def get(self, request):
-        category = request.query_params.get('category', None)  # Filter by category
-        brand = request.query_params.get('brand', None)  # Filter by brand
-        min_price = request.query_params.get('min_price', None)  # Minimum price
-        max_price = request.query_params.get('max_price', None)  # Maximum price
-        sort_by = request.query_params.get('sort', 'price')  # Sorting option (default to price)
+        category = request.query_params.get('category', None) 
+        brand = request.query_params.get('brand', None)  
+        min_price = request.query_params.get('min_price', None)  
+        max_price = request.query_params.get('max_price', None)  
+        sort_by = request.query_params.get('sort', 'price')  
 
         queryset = Material.objects.all()
 
@@ -66,7 +66,7 @@ class MaterialDetailView(APIView):
         if sort_by in ['price', '-price', 'material_name', '-material_name']:
             queryset = queryset.order_by(sort_by)
         else:
-            queryset = queryset.order_by('price')  # Default sorting
+            queryset = queryset.order_by('price')  
 
         serializer = MaterialSerializer(queryset, many=True)
         return Response(serializer.data)

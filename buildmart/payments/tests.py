@@ -22,7 +22,7 @@ class PaymentTestCase(TestCase):
             phone_number='254717244476',
             status='Pending'
         )
-        self.assertIsNotNone(payment.id)  # Check that payment was created successfully
+        self.assertIsNotNone(payment.id) 
 
     def test_payment_without_user(self):
        

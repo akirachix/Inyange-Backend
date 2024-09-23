@@ -9,14 +9,12 @@ User = get_user_model()
 
 class CartTestCase(TestCase):
     def setUp(self):
-        # Create a test user
         self.user = User.objects.create_user(
             username='testuser',
             email='testuser@example.com',
             password='testpassword'
         )
         
-        # Create a test material
         self.material = Material.objects.create(
             material_id=1,
             material_name='Test Material',
@@ -25,15 +23,13 @@ class CartTestCase(TestCase):
             quantity=100
         )
         
-        # Mock the request and session
         self.factory = RequestFactory()
         self.request = self.factory.get('/')
         self.request.user = self.user
         self.request.session = self.client.session
-        self.cart = Cart(self.request)  # Initialize the cart
+        self.cart = Cart(self.request)  
 
     def tearDown(self):
-        # Clean up any UserCart entries created during tests
         UserCart.objects.filter(user=self.user).delete()
 
     def test_add_item_to_cart(self):
@@ -41,7 +37,6 @@ class CartTestCase(TestCase):
         material_data = {'id': self.material.material_id, 'price': str(self.material.price)}
         self.cart.add_item(material_data, quantity=2)
         
-        # Check that the item is added correctly
         self.assertEqual(len(self.cart), 2)
         self.assertIn(str(self.material.material_id), self.cart.cart)
         self.assertEqual(self.cart.cart[str(self.material.material_id)]['quantity'], 2)
@@ -53,7 +48,6 @@ class CartTestCase(TestCase):
         self.cart.add_item(material_data, quantity=2)
         self.cart.remove_item(self.material.material_id)
         
-        # Check that the item is removed
         self.assertNotIn(str(self.material.material_id), self.cart.cart)
         self.assertEqual(len(self.cart), 0)
 
@@ -62,7 +56,6 @@ class CartTestCase(TestCase):
         material_data = {'id': self.material.material_id, 'price': str(self.material.price)}
         self.cart.add_item(material_data, quantity=2)
         
-        # Check that the items are returned correctly
         items = list(self.cart.get_items())
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0][0], str(self.material.material_id))
@@ -73,7 +66,6 @@ class CartTestCase(TestCase):
         material_data = {'id': self.material.material_id, 'price': str(self.material.price)}
         self.cart.add_item(material_data, quantity=2)
         
-        # Check the total price
         self.assertEqual(self.cart.get_total_price(), Decimal('20.00'))
 
 

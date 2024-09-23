@@ -30,15 +30,14 @@ class Cart:
     def load_user_cart(self):
         """Loads the user's cart from the database."""
         if self.user and self.user.is_authenticated:
-            # Use the UserCart model to fetch or create a cart for the user
             user_cart, created = UserCart.objects.get_or_create(user=self.user)
             if created:
-                self.cart = {}  # If no cart exists, initialize an empty cart
+                self.cart = {} 
             else:
-                self.cart = user_cart.cart  # Load the cart from the database
+                self.cart = user_cart.cart  
                 
     def add_item(self, material, quantity=1, override_quantity=False):
-        material_id = str(material.get('id'))  # Convert material ID to string to use as key
+        material_id = str(material.get('id')) 
         if not material_id:
             raise ValueError("Material ID is required")
         
@@ -54,7 +53,7 @@ class Cart:
                 'user_id': self.user.id if self.user else None
         }
         self.save()
-        print(f"Cart after adding item: {self.cart}")  # Debug: print cart state after adding item        
+        print(f"Cart after adding item: {self.cart}")         
 
     def save(self):
         """Saves the current cart session."""
