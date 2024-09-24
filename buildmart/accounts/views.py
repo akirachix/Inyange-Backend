@@ -14,7 +14,6 @@ from django.http import HttpResponseForbidden
 from user.models import User
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from cart.models import UserCart
 
 
 oauth = OAuth()
@@ -45,7 +44,6 @@ def login(request):
             django_login(request, user)
             logger.info (f"User {username} logged in sucessfully.")
             
-            cart, created = Cart.objects.get_or_create(user=user)
             return JsonResponse({'status':'success','message':'Logged in successfully!'}, status=200)
         else:
             logger.warning(f"Failed login attempt for username: {username}")
