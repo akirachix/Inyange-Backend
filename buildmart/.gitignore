@@ -5,16 +5,48 @@ venv/
 # Django
 db.sqlite3
 __pycache__/
+*.py[cod]
+# Django Stuff
+*.log
+*.pot
 *.pyc
-# Backup files
-*.bak
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+# Environment Files
+.env
+*.env
+# Virtual Environment
+venv/
+env/
+.env/
+venv.bak/
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
 # PyCharm
 .idea/
-# Python Packaginga
-*.egg-info/
-dist/
-build/
-# VSCode
+# VS Code
 .vscode/
-# Ignore custom file containing databases
-database_config.py
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+Desktop.ini
+# Coverage Reports
+htmlcov/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+# Build
+build/
+dist/
+*.egg-info/
+.eggs/

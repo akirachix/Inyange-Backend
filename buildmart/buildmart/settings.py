@@ -15,6 +15,8 @@ from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 import dj_database_url
 
+load_dotenv()
+
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
@@ -22,6 +24,7 @@ if ENV_FILE:
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATE_DIR = os.path.join(BASE_DIR, "BuildMart", "templates")
 
 
 # Quick-start development settings - unsuitable for production
@@ -35,6 +38,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY', '')
+MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET', '')
+MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE', '')
+MPESA_PASSKEY = os.getenv('MPESA_PASSKEY', '')
+MPESA_ACCESS_TOKEN_LINK = os.getenv('MPESA_ACCESS_TOKEN_LINK', '') 
+MPESA_LINK = os.getenv('MPESA_LINK', '')
+
 
 # Application definition
 
@@ -47,7 +57,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
+    'cart',
+    'order',
     'material',
+    'accounts',
+    'payments',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +74,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default session backend
+SESSION_COOKIE_NAME = 'sessionid'
 
 ROOT_URLCONF = 'buildmart.urls'
 
@@ -79,32 +97,24 @@ TEMPLATES = [
 ]
 
 
+REST_FRAMEWORK = {
+   
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+
 WSGI_APPLICATION = 'buildmart.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DB_NAME'),
-#         'USER': os.getenv('DB_USER'),
-#         'PASSWORD': os.getenv('DB_PASSWORD'),
-#         'HOST': os.getenv('DB_HOST'),
-#         'PORT': os.getenv('DB_PORT'),
-#         'TEST': {
-#             'NAME': 'inyange_database',
-#         },
-#     }
-# }
 
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL')
     )
 }
-# Fallback for local development and test environments
+
 if not os.getenv('DATABASE_URL'):
     DATABASES = {
         'default': {
@@ -144,6 +154,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+CART_SESSION_ID = 'cart'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -157,3 +169,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
+REDIRECT_URI = 'http://localhost:8001/auth/callback'
+
+
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
+AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
+AUTH_USER_MODEL = 'user.User'  
+AUTHENTICATION_BACKENDS = [
+    'user.backends.EmailBackend',  
+    'django.contrib.auth.backends.ModelBackend',  
+]
