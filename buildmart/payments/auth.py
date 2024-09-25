@@ -1,5 +1,5 @@
-
 import requests
+import base64
 from django.conf import settings
 
 def get_access_token():
@@ -9,9 +9,7 @@ def get_access_token():
             f'{settings.MPESA_CONSUMER_KEY}:{settings.MPESA_CONSUMER_SECRET}'.encode('utf-8')
         ).decode('utf-8')
     }
-
     response = requests.get(url, headers=headers)
-    
     if response.status_code == 200:
         return response.json().get('access_token')
     else:

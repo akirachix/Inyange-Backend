@@ -13,7 +13,6 @@ from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from user.models import User
 from django.http import JsonResponse
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -31,6 +30,27 @@ logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
+@csrf_exempt
+def login(request):
+    """
+    API endpoint for logging in a user via POST. Returns 405 for unsupported methods.
+    """
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        logger.info(f"Login attempt for username: {username}")
+        user = authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            django_login(request, user)
+            logger.info(f"User {username} logged in successfully.")
+            return JsonResponse({'status': 'success', 'message': 'Logged in successfully!'}, status=200)
+        else:
+            logger.warning(f"Failed login attempt for username: {username}")
+            return JsonResponse({'status': 'error', 'message': 'Invalid credentials'}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
 def login(request):
     """
     Redirect the user to the Auth0 login page.
@@ -44,6 +64,15 @@ def login(request):
         if user is not None and user.is_active:
             django_login(request, user)
             logger.info (f"User {username} logged in sucessfully.")
+            
+            return JsonResponse({'status':'success','message':'Logged in successfully!'}, status=200)
+        else:
+            logger.warning(f"Failed login attempt for username: {username}")
+            return JsonResponse({'status':'error', 'message':'Invalid credentials'}, status=400)thenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            django_login(request, user)
+            logger.info (f"User {username} logged in sucessfully.")
+            
             return JsonResponse({'status':'success','message':'Logged in successfully!'}, status=200)
         else:
             logger.warning(f"Failed login attempt for username: {username}")
@@ -96,8 +125,6 @@ def logout(request):
   )
 
 
-
-
 def check_existing_email(email):
     """
     Check if a user with the given email address already exists.
@@ -122,7 +149,6 @@ def index(request):
     if not check_existing_email(email):
         return HttpResponse("User does not exist.")
 
-    # Render the index page with user session data
     return render(
         request,
         "accounts/index.html",

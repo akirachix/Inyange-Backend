@@ -9,6 +9,11 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from datetime import timedelta
+
+# Other imports...
+
+# Your existing settings...
 
 import os
 from pathlib import Path
@@ -16,10 +21,16 @@ from dotenv import load_dotenv, find_dotenv
 import dj_database_url
 
 load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
+    
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,7 +54,7 @@ MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET', '')
 MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE', '')
 MPESA_PASSKEY = os.getenv('MPESA_PASSKEY', '')
 MPESA_ACCESS_TOKEN_LINK = os.getenv('MPESA_ACCESS_TOKEN_LINK', '') 
-MPESA_LINK = os.getenv('MPESA_LINK', '')
+MPESA_LINK = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
 
 
 # Application definition
@@ -55,6 +66,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',
     'api',
     'rest_framework',
     'cart',
@@ -63,7 +75,15 @@ INSTALLED_APPS = [
     'accounts',
     'payments',
     'user',
+    'django_filters',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'user.backends.YourCustomBackend',  
+]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -97,19 +117,30 @@ TEMPLATES = [
 ]
 
 
+
 REST_FRAMEWORK = {
-   
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365*10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365*10),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
 
 WSGI_APPLICATION = 'buildmart.wsgi.application'
 
 
 
 DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
+    }
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL')
     )
@@ -172,10 +203,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REDIRECT_URI = 'http://localhost:8001/auth/callback'
 
 
+# REDIRECT_URI = 'http://localhost:3000/accounts/'
+    
+AUTH_USER_MODEL = 'user.User'
+
+
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
 AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
 AUTH_USER_MODEL = 'user.User'  
+
 AUTHENTICATION_BACKENDS = [
     'user.backends.EmailBackend',  
     'django.contrib.auth.backends.ModelBackend',  
