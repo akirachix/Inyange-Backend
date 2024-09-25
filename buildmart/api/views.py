@@ -45,32 +45,13 @@ class MaterialListView(APIView):
 
 
 class MaterialDetailView(APIView):
-    def get(self, request):
-        category = request.query_params.get('category', None) 
-        brand = request.query_params.get('brand', None)  
-        min_price = request.query_params.get('min_price', None)  
-        max_price = request.query_params.get('max_price', None)  
-        sort_by = request.query_params.get('sort', 'price')  
-
-        queryset = Material.objects.all()
-
-        if category:
-            queryset = queryset.filter(category_name=category)
-        if brand:
-            queryset = queryset.filter(brand_name=brand)
-        if min_price:
-            queryset = queryset.filter(price__gte=min_price)
-        if max_price:
-            queryset = queryset.filter(price__lte=max_price)
-        
-        if sort_by in ['price', '-price', 'material_name', '-material_name']:
-            queryset = queryset.order_by(sort_by)
-        else:
-            queryset = queryset.order_by('price')  
-
-        serializer = MaterialSerializer(queryset, many=True)
-        return Response(serializer.data)
-    
+    def get(self, request, id):
+        try:
+            material = Material.objects.get(material_id=id)
+        except Material.DoesNotExist:
+            return Response({'error': f'Material with id {id} not found.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = MaterialSerializer(material)
+        return Response(serializer.data)    
     
     def put(self, request, id):
         try:

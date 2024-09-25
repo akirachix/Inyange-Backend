@@ -211,16 +211,8 @@ REDIRECT_URI = os.environ.get("REDIRECT_URI", '')
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN", "")
 AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID", "")
 AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET", "")
-
-
-
-REDIRECT_URI = 'http://localhost:8001/auth/callback'
-
-
-AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
-AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
-AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
-AUTH_USER_MODEL = 'user.User'  
+AUTH_USER_MODEL = 'user.User' 
+ 
 
 AUTHENTICATION_BACKENDS = [
     'user.backends.EmailBackend',  
