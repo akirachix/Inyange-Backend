@@ -20,6 +20,8 @@ from datetime import timedelta
 import os
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
+import dj_database_url
+
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -200,6 +202,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
     
 AUTH_USER_MODEL = 'user.User'
 
@@ -208,6 +211,15 @@ REDIRECT_URI = os.environ.get("REDIRECT_URI", '')
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN", "")
 AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID", "")
 AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET", "")
+
+
+
+REDIRECT_URI = 'http://localhost:8001/auth/callback'
+
+
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
+AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
 AUTH_USER_MODEL = 'user.User'  
 
 AUTHENTICATION_BACKENDS = [
