@@ -30,10 +30,9 @@ logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
-@csrf_exempt
 def login(request):
     """
-    API endpoint for logging in a user via POST. Returns 405 for unsupported methods.
+    Redirect the user to the Auth0 login page.
     """
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -43,8 +42,9 @@ def login(request):
         user = authenticate(username=username, password=password)
         if user is not None and user.is_active:
             django_login(request, user)
-            logger.info(f"User {username} logged in successfully.")
-            return JsonResponse({'status': 'success', 'message': 'Logged in successfully!'}, status=200)
+            logger.info (f"User {username} logged in sucessfully.")
+            
+            return JsonResponse({'status':'success','message':'Logged in successfully!'}, status=200)
         else:
             logger.warning(f"Failed login attempt for username: {username}")
             return JsonResponse({'status': 'error', 'message': 'Invalid credentials'}, status=400)
@@ -76,6 +76,7 @@ def login(request):
             return JsonResponse({'status':'success','message':'Logged in successfully!'}, status=200)
         else:
             logger.warning(f"Failed login attempt for username: {username}")
+            return JsonResponse({'status':'error', 'message':'Invalid credentials'}, status=400)
             return JsonResponse({'status':'error', 'message':'Invalid credentials'}, status=400)
 
 @csrf_exempt

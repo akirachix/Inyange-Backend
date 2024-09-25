@@ -1,3 +1,5 @@
+import dj_database_url
+
 """
 Django settings for buildmart project.
 
@@ -47,7 +49,7 @@ SECRET_KEY = 'django-insecure-=*=5(1t0ro--+7c^*udqx8zdeo7z$4=vouz66&=q49s8xglhcg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY', '')
 MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET', '')
@@ -76,6 +78,7 @@ INSTALLED_APPS = [
     'payments',
     'user',
     'django_filters',
+    'corsheaders',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -87,6 +90,8 @@ AUTHENTICATION_BACKENDS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -95,7 +100,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default session backend
+CORS_ORIGIN_ALLOW_ALL = True
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  
 SESSION_COOKIE_NAME = 'sessionid'
 
 ROOT_URLCONF = 'buildmart.urls'
@@ -136,23 +143,22 @@ WSGI_APPLICATION = 'buildmart.wsgi.application'
 
 
 
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
-    }
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL')
-    )
+   'default': dj_database_url.config(
+       default=os.getenv('DATABASE_URL')
+   )
 }
 
+
 if not os.getenv('DATABASE_URL'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.sqlite3',
+           'NAME': BASE_DIR / 'db.sqlite3',
+       }
+   }
+
 
 
 # Password validation
@@ -192,6 +198,8 @@ CART_SESSION_ID = 'cart'
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -208,12 +216,15 @@ REDIRECT_URI = 'http://localhost:8001/auth/callback'
 AUTH_USER_MODEL = 'user.User'
 
 
-AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
-AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
-AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
+REDIRECT_URI = os.environ.get("REDIRECT_URI", '')
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN", "")
+AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID", "")
+AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET", "")
 AUTH_USER_MODEL = 'user.User'  
+
 
 AUTHENTICATION_BACKENDS = [
     'user.backends.EmailBackend',  
     'django.contrib.auth.backends.ModelBackend',  
 ]
+
