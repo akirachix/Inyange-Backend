@@ -22,3 +22,4 @@ psycopg2-binary==2.9.9
 django-cors-headers==4.4.0
 dj-database-url
 black==24.8.0
+django-filter==24.3
