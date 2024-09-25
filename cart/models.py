@@ -5,4 +5,4 @@ User = get_user_model()
 
 class UserCart(models.Model): 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart') 
-    cart = models.JSONField(default=dict) 
+    cart = models.JSONField( default=dict) 
