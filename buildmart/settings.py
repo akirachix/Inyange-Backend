@@ -102,7 +102,7 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default session backend
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  
 SESSION_COOKIE_NAME = 'sessionid'
 
 ROOT_URLCONF = 'buildmart.urls'
@@ -142,19 +142,23 @@ SIMPLE_JWT = {
 WSGI_APPLICATION = 'buildmart.wsgi.application'
 
 
+
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL')
-    )
+   'default': dj_database_url.config(
+       default=os.getenv('DATABASE_URL')
+   )
 }
 
+
 if not os.getenv('DATABASE_URL'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.sqlite3',
+           'NAME': BASE_DIR / 'db.sqlite3',
+       }
+   }
+
 
 
 # Password validation
@@ -203,6 +207,11 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+
+REDIRECT_URI = 'http://localhost:8001/auth/callback'
+
+
+# REDIRECT_URI = 'http://localhost:3000/accounts/'
     
 AUTH_USER_MODEL = 'user.User'
 
@@ -211,8 +220,8 @@ REDIRECT_URI = os.environ.get("REDIRECT_URI", '')
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN", "")
 AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID", "")
 AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET", "")
-AUTH_USER_MODEL = 'user.User' 
- 
+AUTH_USER_MODEL = 'user.User'  
+
 
 AUTHENTICATION_BACKENDS = [
     'user.backends.EmailBackend',  
