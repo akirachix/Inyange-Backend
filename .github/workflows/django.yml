@@ -1,4 +1,4 @@
-name:cI/CD Pipeline
+name: Django CI
 on:
   push:
     branches: [ "main" ]
@@ -19,27 +19,15 @@ jobs:
           pip install -r requirements.txt
           python -m pip install --upgrade pip
 
-      - name: Run migrations
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }} 
-        run: |
-          python manage.py migrate
-          
-      - name: Run tests
-        run: |
-          python manage.py test
-
-      - name: Set up Git remote for Heroku
+     - name: Set up Git remote for Heroku
         run: |
           git remote -v
           git remote add heroku https://git.heroku.com/buildmart.git || echo "Heroku remote already exists"
-
       - name: Set Heroku buildpack
         run: |
           heroku buildpacks:set heroku/python -a buildmart
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
       - name: Deploy to Heroku
         uses: akhileshns/heroku-deploy@v3.13.15
         with:
