@@ -7,6 +7,8 @@ USER_ROLES = [
     ('supplier', 'Supplier'),
 ]
 class User(AbstractUser, PermissionsMixin):
+    location = models.CharField(max_length=255, blank=True, null=True)
+
 
     phone_number = models.CharField(max_length=18)
     user_role = models.CharField(max_length=20, choices=USER_ROLES)
