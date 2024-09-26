@@ -68,7 +68,7 @@ def login(request):
             return JsonResponse({'status':'success','message':'Logged in successfully!'}, status=200)
         else:
             logger.warning(f"Failed login attempt for username: {username}")
-            return JsonResponse({'status':'error', 'message':'Invalid credentials'}, status=400)thenticate(username=username, password=password)
+            return JsonResponse({'status':'error', 'message':'Invalid credentials'}, status=400)
         if user is not None and user.is_active:
             django_login(request, user)
             logger.info (f"User {username} logged in sucessfully.")
