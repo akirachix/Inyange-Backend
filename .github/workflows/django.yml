@@ -1,4 +1,4 @@
-name: Django CI
+name:cI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
@@ -17,10 +17,11 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          python -m pip install --upgrade pip
 
       - name: Run migrations
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }} 
         run: |
           python manage.py migrate
           
@@ -45,3 +46,4 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "buildmart"
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
+
