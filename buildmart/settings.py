@@ -21,6 +21,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 import dj_database_url
+import django_filters
+
 
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent

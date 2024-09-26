@@ -22,7 +22,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'phone_number', 'first_name', 'last_name','user_role')
+        fields = ('username', 'password', 'email', 'phone_number', 'first_name', 'last_name','user_role','location')
         extra_kwargs = {'password':{'write_only': True}}
      
     def validate(self, data):
