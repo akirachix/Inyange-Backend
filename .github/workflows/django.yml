@@ -18,9 +18,8 @@ jobs:
         run: |
           pip install -r requirements.txt
           python -m pip install --upgrade pip
-
-     - name: Set up Git remote for Heroku
-        run: |
+          - name: Set up Git remote for Heroku
+          run: |
           git remote -v
           git remote add heroku https://git.heroku.com/buildmart.git || echo "Heroku remote already exists"
       - name: Set Heroku buildpack
