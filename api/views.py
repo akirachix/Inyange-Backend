@@ -81,6 +81,11 @@ class UserListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class RegisterView(APIView):
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
