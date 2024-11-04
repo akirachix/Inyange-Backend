@@ -81,6 +81,11 @@ class UserListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class RegisterView(APIView):
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -244,93 +249,117 @@ class CartListView(APIView):
     def post(self, request, **kwargs):
         if not request.user.is_authenticated:
             return Response({"error": "Authentication credentials required."}, status=status.HTTP_401_UNAUTHORIZED)
+        
         items = request.data.get('items', [])
         if not items or not isinstance(items, list):
             return Response({"error": "Invalid request. 'items' should be a list of item objects."}, status=status.HTTP_400_BAD_REQUEST)
+        
         cart = Cart(request)
-        added_items = [] 
-        errors = [] 
+        added_items = []
+        errors = []
+        
         for item in items:
             material_name = item.get('material_name')
             brand_name = item.get('brand_name')
             price = item.get('price', '0.00')
             quantity = item.get('quantity', 1)
             override_quantity = item.get('override_quantity', False)
+            
             if not material_name or not brand_name:
                 error_message = f"Missing required fields: 'material_name' or 'brand_name' for item: {item}"
                 logger.error(error_message)
                 errors.append({"error": error_message})
-                continue 
+                continue
+            
             try:
                 material_obj = None
                 materials = Material.objects.filter(material_name=material_name, brand_name=brand_name)
+                
                 if not materials.exists():
                     error_message = f"Material not found: {material_name} by {brand_name}."
                     logger.error(error_message)
                     errors.append({"error": error_message})
-                    continue  
+                    continue
                 if materials.count() > 1:
                     error_message = f"Multiple materials found for name: {material_name} and brand: {brand_name}."
                     logger.warning(error_message)
                     errors.append({"error": error_message})
-                    continue 
+                    continue
                 material_obj = materials.first()
+                
             except Exception as e:
                 error_message = f"Error finding material: {str(e)} for item: {item}"
                 logger.error(error_message)
                 errors.append({"error": error_message})
-                continue  
+                continue
+            
             if material_obj is None:
                 error_message = "Unexpected error: Material object is None after filtering."
                 logger.error(error_message)
                 errors.append({"error": error_message})
-                continue  
+                continue
+            
+            
             try:
                 cart.add_item({
-                    'id': material_obj.material_id,  
+                    'id': material_obj.material_id,
                     'name': material_obj.material_name,
                     'price': price,
                     'quantity': quantity,
                     }, override_quantity=override_quantity)
+                
                 added_items.append({
                     'id': material_obj.material_id,
                     'name': material_name,
                     'price': price,
                     'quantity': quantity
+                    
                     })
+                
             except Exception as e:
                 error_message = f"Failed to add item: {material_name} by {brand_name}. Reason: {str(e)}"
                 logger.error(error_message)
                 errors.append({"error": error_message})
-                continue  
-            cart_items = list(cart.get_items())
-            cart_total_price = str(cart.get_total_price())  
-            item_count = len(cart)  
-            material_ids = [item_id for item_id, _ in cart_items]
-            materials = Material.objects.filter(material_id__in=material_ids)
-            material_dict = {str(material.material_id): material.material_name for material in materials}
-            formatted_cart_items = [
-                {
-                    "material_id": item_id,
-                    "material_name": material_dict.get(item_id, "Unknown"),  
-                    "quantity": item_data["quantity"],
-                    "price": item_data["price"],
-                    "user_id": item_data["user_id"]
-                    }
-                for item_id, item_data in cart_items
-                ]
+                continue
+    
+        cart_items = list(cart.get_items())
+        cart_total_price = str(cart.get_total_price())
+        item_count = len(cart)
+        material_ids = [item_id for item_id, _ in cart_items]
+        materials = Material.objects.filter(material_id__in=material_ids)
+        material_dict = {str(material.material_id): material.material_name for material in materials}
+        formatted_cart_items = [
             
-            cart_details = {
-                "cart_items": formatted_cart_items,
-                "cart_total_price": cart_total_price,
-                "item_count": item_count
+            {
+                "material_id": item_id,
+                "material_name": material_dict.get(item_id, "Unknown"),
+                "quantity": item_data["quantity"],
+                "price": item_data["price"],
+                "user_id": item_data["user_id"]
                 }
-            response = {
-                "message": "Items processed.",
-                "cart_details": cart_details,
-                "errors": errors  
-                }
+            for item_id, item_data in cart_items
+            ]
+        
+        cart_details = {
+            "cart_items": formatted_cart_items,
+            "cart_total_price": cart_total_price,
+            "item_count": item_count
+            }
+        
+        response = {
+            "message": "Items processed.",
+            "cart_details": cart_details,
+            "errors": errors
+            }
+        
         return Response(response, status=status.HTTP_201_CREATED)
+
+        
+        
+ 
+    
+    
+    
         
         
         
