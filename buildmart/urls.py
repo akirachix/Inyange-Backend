@@ -29,3 +29,9 @@ urlpatterns = [
     path('process_payment/', process_payment, name='process_payment'),
     path('check_payment_status/', check_payment_status_view, name='check_payment_status'),
 ]
+
+if settings.DEBUG:
+    
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
