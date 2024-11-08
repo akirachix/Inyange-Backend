@@ -1,4 +1,8 @@
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
+from rest_framework.authtoken import views
+from rest_framework.authtoken.views import ObtainAuthToken
 from .views import MaterialDetailView
 from .views import MaterialListView
 from .views import UserListView
@@ -7,8 +11,7 @@ from .views import RegisterView
 from .views import OrderDetailView
 from .views import OrderListView
 from .views import CartListView
-from rest_framework.authtoken import views
-from rest_framework.authtoken.views import ObtainAuthToken
+
 
 
 urlpatterns = [
@@ -22,6 +25,9 @@ urlpatterns = [
     path('order/', CartListView.as_view(), name='order'),
     path('api-token-auth/', views.obtain_auth_token),
     path('generate_token/', ObtainAuthToken.as_view(), name='generate_token'),
-    
-
 ]
+
+if settings.DEBUG:
+    
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

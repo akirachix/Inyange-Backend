@@ -43,7 +43,6 @@ class MaterialListView(APIView):
         else:
             return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
 
-
 class MaterialDetailView(APIView):
     def get(self, request, id):
         try:
