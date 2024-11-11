@@ -26,4 +26,4 @@ class Material(models.Model):
     image = models.ImageField(upload_to='materials_images/', validators=[validate_image_format]) 
 
     def __str__(self):
-        return f"{self.material_name} {self.description}"
+        return f"{self.material_name} {self.description}"  
