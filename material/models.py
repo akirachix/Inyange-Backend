@@ -3,10 +3,11 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 def validate_image_format(image):
-    ext = os.path.splitext(image.name)[1].lower()
-    valid_extensions = ['.jpg', '.jpeg', '.png']
-    if ext not in valid_extensions:
-        raise ValidationError(f'Unsupported file extension: {ext}. Allowed extensions are: .jpg, .jpeg, .png.')
+    if image:
+        ext = os.path.splitext(image.name)[1].lower()
+        valid_extensions = ['.jpg', '.jpeg', '.png']
+        if ext not in valid_extensions:
+            raise ValidationError(f'Unsupported file extension: {ext}. Allowed extensions are: .jpg, .jpeg, .png.')
 
 class Material(models.Model):
     material_id = models.AutoField(primary_key=True)
@@ -22,7 +23,7 @@ class Material(models.Model):
     description = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     quantity = models.PositiveIntegerField()
-    image = models.ImageField(upload_to='materials_images/', validators=[validate_image_format])  # Fixed typo in 'materials'
+    image = models.ImageField(upload_to='materials_images/', validators=[validate_image_format]) 
 
     def __str__(self):
-        return f"{self.material_name} {self.description}"
+        return f"{self.material_name} {self.description}"  

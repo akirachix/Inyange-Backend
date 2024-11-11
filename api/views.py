@@ -43,7 +43,6 @@ class MaterialListView(APIView):
         else:
             return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
 
-
 class MaterialDetailView(APIView):
     def get(self, request, id):
         try:
@@ -65,6 +64,16 @@ class MaterialDetailView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+    def delete(self, request, id, format=None):
+        try:
+            material = Material.objects.get(material_id=id)
+        except Material.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        material.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
 
 class UserListView(APIView):
